@@ -1,59 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>quatroivinti</title>
-</head>
-<body>
-    <canvas></canvas>
-    <script>
-        var canvas = document.querySelector("canvas");
-        canvas.width = 830;
-        canvas.height = 500;
-        var dt = 0;
-        var anterior = 0;
-        var pcw = 30;
-        var pcvx = 0;
-        var pcvy = 0;
-        var invy = 400;
-        var tg = 0;
-        
-        var ctx = canvas.getContext("2d");
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>quatroivinti</title>
+    </head>
+    <body>
+        <canvas></canvas>
+        <script>
+            var canvas = document.querySelector("canvas");
+            canvas.width = 830;
+            canvas.height = 500;
+            var dt = 0;
+            var anterior = 0;
+            var pc = {};
+            
+            pc.w = 30;
+            pc.vx = 0;
+            pc.vy = 0;
+            pc.x = 200;
+            pc.y = 200;
 
+            var invy = 400;
+            var tg = 0;
+            var iny = 325;
+            
+            var ctx = canvas.getContext("2d");
+            
         function teclaPressionada(e){
             console.log(e.keyCode);
-            if (e.keyCode == 39 && pcx <= canvas.width-30){
-                pcvx = 400;
+            if (e.keyCode == 39 && pc.x <= canvas.width-30){
+                pc.vx = 400;
             }
-            if (e.keyCode == 37 && pcx > 0){
-                pcvx = -400;
+            if (e.keyCode == 37 && pc.x > 0){
+                pc.vx = -400;
             }
-            if (e.keyCode == 40 && pcy <= (canvas.height-35)){
-                pcvy = 800;
+            if (e.keyCode == 40 && pc.y <= (canvas.height-35)){
+                pc.vy = 800;
             }
-            if (e.keyCode == 38 && pcy > 10 ){
-                pcvy = -800;
+            if (e.keyCode == 38 && pc.y > 10 ){
+                pc.vy = -800;
             }
             if (e.keyCode == 16){
-                pcvy = pcvy*2;
-                pcvx = pcvx*2;
+                pc.vy = pc.vy*2;
+                pc.vx = pc.vx*2;
             }
         }
         function teclaSolta(e){
             console.log(e.keyCode);
             if (e.keyCode == 39){
-                pcvx = 0;
+                pc.vx = 0;
             }
             if (e.keyCode == 37){
-                pcvx = 0;
+                pc.vx = 0;
             }
             if (e.keyCode == 40){
-                pcvy = 0;
+                pc.vy = 0;
             }
             if (e.keyCode == 38){
-                //pcvy = 0;
+                //pc.vy = 0;
             }
         }
         
@@ -63,16 +69,16 @@
 
         function personagem(x,y){
             ctx.fillStyle = "blue";
-            ctx.fillRect(x,y,pcw,pcw);
+            ctx.fillRect(x,y,pc.w,pc.w);
             ctx.strokeStyle = "white";
-            ctx.strokeRect(x,y,pcw,pcw);
+            ctx.strokeRect(x,y,pc.w,pc.w);
         }
 
         function inimigo(x,y,t){
             ctx.fillStyle = "black";
-            ctx.fillRect(x,y,pcw,pcw);
+            ctx.fillRect(x,y,pc.w,pc.w);
             ctx.strokeStyle = "red";
-            ctx.strokeRect(x,y,pcw,pcw);
+            ctx.strokeRect(x,y,pc.w,pc.w);
         }
 
         function limpaTela(){
@@ -86,29 +92,29 @@
             ctx.fillStyle = "black"
             ctx.fillText(t,10,10);
             ctx.fillText(dt,10,20);
-            pcx = pcx + pcvx*dt;
-            if(pcy<=450) {
+            pc.x = pc.x + pc.vx*dt;
+            if(pc.y<=450) {
                 tg = dt/10 + tg;
-                pcy = pcy + pcvy*dt + (300)*tg;
+                pc.y = pc.y + pc.vy*dt + (300)*tg;
             }
-            if(pcy>450) {
-                pcy = 450;
+            if(pc.y>450) {
+                pc.y = 450;
                 tg=0;
-                pcvy=0;
+                pc.vy=0;
             }
             iny = iny + invy*dt;
-            if ((pcx >= 370 && pcx <= 430) && (pcy >= invy-30 && pcy <= invy+30)){
-                pcvx = 0;
-                pcvy = 0;
+            if ((pc.x >= 370 && pc.x <= 430) && (pc.y >= invy-30 && pc.y <= invy+30)){
+                pc.vx = 0;
+                pc.vy = 0;
             }
-            personagem(pcx-100,pcy);
+            personagem(pc.x-100,pc.y);
             inimigo(400,iny);
             anterior = t;
-            if (pcx >= canvas.width + 60 || pcx <= 0){
+            if (pc.x >= canvas.width + 60 || pc.x <= 0){
                 
-                pcvx = 0;
+                pc.vx = 0;
             }
-            if (pcy >= (canvas.height-34) || pcy <= 0){
+            if (pc.y >= (canvas.height-34) || pc.y <= 0){
                 pcv = 0;
             }
             if (iny >= (canvas.height-35) || iny <= 0){
@@ -116,9 +122,6 @@
             }
         requestAnimationFrame(passo);
         }
-        var pcx = 200;
-        var pcy = 200;
-        var iny = 325;
         addEventListener("keydown",teclaPressionada);
         addEventListener("keyup",teclaSolta);
         requestAnimationFrame(passo);
