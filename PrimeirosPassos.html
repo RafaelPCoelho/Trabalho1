@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>quatroivinti</title>
+</head>
+<body>
+    <canvas></canvas>
+    <script>
+        var canvas = document.querySelector("canvas");
+        canvas.width = 830;
+        canvas.height = 500;
+        var dt = 0;
+        var anterior = 0;
+        var pcw = 30;
+        var pcvx = 0;
+        var pcvy = 0;
+        var invy = 400;
+        var tg = 0;
+        
+        var ctx = canvas.getContext("2d");
+
+        function teclaPressionada(e){
+            console.log(e.keyCode);
+            if (e.keyCode == 39 && pcx <= canvas.width-30){
+                pcvx = 400;
+            }
+            if (e.keyCode == 37 && pcx > 0){
+                pcvx = -400;
+            }
+            if (e.keyCode == 40 && pcy <= (canvas.height-35)){
+                pcvy = 800;
+            }
+            if (e.keyCode == 38 && pcy > 10 ){
+                pcvy = -800;
+            }
+            if (e.keyCode == 16){
+                pcvy = pcvy*2;
+                pcvx = pcvx*2;
+            }
+        }
+        function teclaSolta(e){
+            console.log(e.keyCode);
+            if (e.keyCode == 39){
+                pcvx = 0;
+            }
+            if (e.keyCode == 37){
+                pcvx = 0;
+            }
+            if (e.keyCode == 40){
+                pcvy = 0;
+            }
+            if (e.keyCode == 38){
+                //pcvy = 0;
+            }
+        }
+        
+        limpaTela();
+
+        personagem(0,100);
+
+        function personagem(x,y){
+            ctx.fillStyle = "blue";
+            ctx.fillRect(x,y,pcw,pcw);
+            ctx.strokeStyle = "white";
+            ctx.strokeRect(x,y,pcw,pcw);
+        }
+
+        function inimigo(x,y,t){
+            ctx.fillStyle = "black";
+            ctx.fillRect(x,y,pcw,pcw);
+            ctx.strokeStyle = "red";
+            ctx.strokeRect(x,y,pcw,pcw);
+        }
+
+        function limpaTela(){
+            ctx.fillStyle = "tan";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+        }
+
+        function passo(t){
+            dt = (t - anterior)/1000;
+            limpaTela();
+            ctx.fillStyle = "black"
+            ctx.fillText(t,10,10);
+            ctx.fillText(dt,10,20);
+            pcx = pcx + pcvx*dt;
+            if(pcy<=450) {
+                tg = dt/10 + tg;
+                pcy = pcy + pcvy*dt + (300)*tg;
+            }
+            if(pcy>450) {
+                pcy = 450;
+                tg=0;
+                pcvy=0;
+            }
+            iny = iny + invy*dt;
+            if ((pcx >= 370 && pcx <= 430) && (pcy >= invy-30 && pcy <= invy+30)){
+                pcvx = 0;
+                pcvy = 0;
+            }
+            personagem(pcx-100,pcy);
+            inimigo(400,iny);
+            anterior = t;
+            if (pcx >= canvas.width + 60 || pcx <= 0){
+                
+                pcvx = 0;
+            }
+            if (pcy >= (canvas.height-34) || pcy <= 0){
+                pcv = 0;
+            }
+            if (iny >= (canvas.height-35) || iny <= 0){
+                invy = -invy;
+            }
+        requestAnimationFrame(passo);
+        }
+        var pcx = 200;
+        var pcy = 200;
+        var iny = 325;
+        addEventListener("keydown",teclaPressionada);
+        addEventListener("keyup",teclaSolta);
+        requestAnimationFrame(passo);
+
+    </script>
+</body>
+</html>

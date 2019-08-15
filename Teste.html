@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testando aqui</title>
+</head>
+<body>
+    <h1>SUPREME</h1>
+    <h2>SUPREME</h2>
+    <h3>SUPREME</h3>
+    <h4>SUPREME</h4>
+    <h5>SUPREME</h5>
+    <h6>SUPREME</h6>
+    <canvas width="600" height="300">MEU DEUS TA ERRADO</canvas>
+    <script>{
+        var canvas=document.querySelector("canvas");
+        var ctx = canvas.getContext("2d");
+
+        preencherRetangulo(0,0,canvas.width,canvas.height,30,"red",3);
+
+        for(var i=100; i >= 0 ; i=i-7){
+            contornaRetangulo(225-i,135-i,150+i*2,30+i*2,"red");
+        }
+
+        preencherRetangulo(225,135,150,30,"red");
+
+        escreveTexto("SUPREME",225,161,"white");
+
+        function preencherRetangulo(x,y,w,h,cor){
+            ctx.fillStyle = cor;
+            ctx.fillRect(x,y,w,h);
+        }
+
+        function contornaRetangulo(x,y,w,h,cor,tam){
+            ctx.lineWidth = tam;
+            ctx.strokeStyle = cor;
+            ctx.strokeRect(x,y,w,h);
+        }
+
+        function escreveTexto(texto,x,y,cor){
+            ctx.font = "bold 30px Arial";
+            ctx.fillStyle = cor;
+            ctx.fillText(texto,x,y);
+
+        }
+
+    }</script>
+    
+</body>
+</html>
