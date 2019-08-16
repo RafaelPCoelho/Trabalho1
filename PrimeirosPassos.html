@@ -14,17 +14,68 @@
             canvas.height = 500;
             var dt = 0;
             var anterior = 0;
-            var pc = {};
+            var invy = 400;
+            var tg = 0;
+            var iny = 325;
             
+            var pc = {};
             pc.w = 30;
             pc.vx = 0;
             pc.vy = 0;
             pc.x = 200;
             pc.y = 200;
 
-            var invy = 400;
-            var tg = 0;
-            var iny = 325;
+            var pc2 = {
+                x : 50,
+                y : 150,
+                w : 30,
+                vx : 0,
+                vy : 0,
+                desenhar : personagem,
+                perseguir : function(alvo){
+                    this.vx = 200*Math.sign(alvo.x - this.x);
+                    this.vy = 200*Math.sign(alvo.y - this.y);
+                },
+            };
+            
+            pc.mover = function(dt){
+                pc.x = pc.x + pc.vx*dt;
+                if(pc.y<=450) {
+                    tg = dt/10 + tg;
+                    pc.y = pc.y + pc.vy*dt + (300)*tg;
+                }
+                if(pc.y>450) {
+                    pc.y = 450;
+                    tg=0;
+                    pc.vy=0;
+                }
+                if (pc.x >= 800 && pc.x <= 0){
+                    pc.vx = 0;
+                    pc.vy = 0;
+                }
+            }
+            pc2.mover = function(dt){
+                pc2.x = pc2.x + pc2.vx*dt;
+                pc2.y = pc2.y + pc2.vy*dt;
+                if(pc2.y>450) {
+                    pc2.y = 450;
+                    //tg=0;
+                    pc2.vy=0;
+                }
+                /*{
+                    if(pc2.y<=450) {
+                        //tg = dt/10 + tg;
+                        pc2.y = pc2.y + pc2.vy*dt + (300)*tg;
+                    }
+                    if ((pc2.x >= 370 && pc2.x <= 430) && (pc2.y >= invy-30 && pc2.y <= invy+30)){
+                        pc2.vx = 0;
+                        pc2.vy = 0;
+                    }
+                }*/
+            }
+
+            pc.desenhar = personagem;
+
             
             var ctx = canvas.getContext("2d");
             
@@ -65,13 +116,11 @@
         
         limpaTela();
 
-        personagem(0,100);
-
-        function personagem(x,y){
+        function personagem(ctx){
             ctx.fillStyle = "blue";
-            ctx.fillRect(x,y,pc.w,pc.w);
+            ctx.fillRect(this.x,this.y,this.w,this.w);
             ctx.strokeStyle = "white";
-            ctx.strokeRect(x,y,pc.w,pc.w);
+            ctx.strokeRect(this.x,this.y,this.w,this.w);
         }
 
         function inimigo(x,y,t){
@@ -88,34 +137,31 @@
 
         function passo(t){
             dt = (t - anterior)/1000;
+
             limpaTela();
+
             ctx.fillStyle = "black"
             ctx.fillText(t,10,10);
             ctx.fillText(dt,10,20);
-            pc.x = pc.x + pc.vx*dt;
-            if(pc.y<=450) {
-                tg = dt/10 + tg;
-                pc.y = pc.y + pc.vy*dt + (300)*tg;
-            }
-            if(pc.y>450) {
-                pc.y = 450;
-                tg=0;
-                pc.vy=0;
-            }
-            iny = iny + invy*dt;
-            if ((pc.x >= 370 && pc.x <= 430) && (pc.y >= invy-30 && pc.y <= invy+30)){
-                pc.vx = 0;
-                pc.vy = 0;
-            }
-            personagem(pc.x-100,pc.y);
+
+            pc.desenhar(ctx);
+            pc.mover(dt);
+            
+            pc2.desenhar(ctx);
+            pc2.mover(dt);
+
+            pc2.perseguir(pc);
+            
             inimigo(400,iny);
+            iny = iny + invy*dt;
+            
             anterior = t;
+            
             if (pc.x >= canvas.width + 60 || pc.x <= 0){
-                
                 pc.vx = 0;
             }
             if (pc.y >= (canvas.height-34) || pc.y <= 0){
-                pcv = 0;
+                pc.v = 0;
             }
             if (iny >= (canvas.height-35) || iny <= 0){
                 invy = -invy;
