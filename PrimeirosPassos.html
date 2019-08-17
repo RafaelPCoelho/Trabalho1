@@ -17,6 +17,8 @@
             var invy = 400;
             var tg = 0;
             var iny = 325;
+            var die=0;
+            var NDtiros = 100;
             
             var pc = {};
             pc.w = 30;
@@ -24,6 +26,15 @@
             pc.vy = 0;
             pc.x = 200;
             pc.y = 200;
+
+            var bala = {
+                x : pc.mover,
+                y : pc.mover,
+                w : 10,
+                vx : 0,
+                vy : 0,
+                desenhar : shoot,
+            }
 
             var pc2 = {
                 x : 50,
@@ -33,8 +44,8 @@
                 vy : 0,
                 desenhar : personagem,
                 perseguir : function(alvo){
-                    this.vx = 200*Math.sign(alvo.x - this.x);
-                    this.vy = 200*Math.sign(alvo.y - this.y);
+                    this.vx = 100*Math.sign(alvo.x - this.x);
+                    this.vy = 100*Math.sign(alvo.y - this.y);
                 },
             };
             
@@ -49,9 +60,11 @@
                     tg=0;
                     pc.vy=0;
                 }
-                if (pc.x >= 800 && pc.x <= 0){
-                    pc.vx = 0;
-                    pc.vy = 0;
+                if (pc.x<-29){
+                    pc.x=829;
+                } 
+                if(pc.x>829){
+                    pc.x =-29;
                 }
             }
             pc2.mover = function(dt){
@@ -74,28 +87,37 @@
                 }*/
             }
 
+            bala.mover = function(dt){
+                bala.y = pc.y + bala.vy*dt;
+                bala.x = pc.x + bala.vx*dt;
+            }
+
             pc.desenhar = personagem;
 
+            bala.desenhar = shoot;
             
             var ctx = canvas.getContext("2d");
-            
+
         function teclaPressionada(e){
             console.log(e.keyCode);
-            if (e.keyCode == 39 && pc.x <= canvas.width-30){
+            if (e.keyCode == 39){
                 pc.vx = 400;
             }
-            if (e.keyCode == 37 && pc.x > 0){
+            if (e.keyCode == 37){
                 pc.vx = -400;
             }
-            if (e.keyCode == 40 && pc.y <= (canvas.height-35)){
+            if (e.keyCode == 40){
                 pc.vy = 800;
             }
-            if (e.keyCode == 38 && pc.y > 10 ){
+            if (e.keyCode == 38){
                 pc.vy = -800;
             }
             if (e.keyCode == 16){
                 pc.vy = pc.vy*2;
                 pc.vx = pc.vx*2;
+            }
+            if(e.keyCode == 32){
+                bala.vx = 1000;
             }
         }
         function teclaSolta(e){
@@ -111,6 +133,8 @@
             }
             if (e.keyCode == 38){
                 //pc.vy = 0;
+            }if(e.keyCode == 32){
+                bala.vx = 0;
             }
         }
         
@@ -123,6 +147,10 @@
             ctx.strokeRect(this.x,this.y,this.w,this.w);
         }
 
+        function shoot(ctx){
+            ctx.fillStyle = "red";
+            ctx.fillRect(this.x,this.y,this.w,this.w);
+        }
         function inimigo(x,y,t){
             ctx.fillStyle = "black";
             ctx.fillRect(x,y,pc.w,pc.w);
@@ -144,8 +172,15 @@
             ctx.fillText(t,10,10);
             ctx.fillText(dt,10,20);
 
-            pc.desenhar(ctx);
-            pc.mover(dt);
+            if (die==0){
+                pc.desenhar(ctx);
+                pc.mover(dt);
+            }
+
+            if (NDtiros > 0){
+            bala.desenhar(ctx);
+            bala.mover(dt);
+            }
             
             pc2.desenhar(ctx);
             pc2.mover(dt);
@@ -154,18 +189,17 @@
             
             inimigo(400,iny);
             iny = iny + invy*dt;
-            
+
             anterior = t;
-            
-            if (pc.x >= canvas.width + 60 || pc.x <= 0){
-                pc.vx = 0;
-            }
-            if (pc.y >= (canvas.height-34) || pc.y <= 0){
-                pc.v = 0;
-            }
+
             if (iny >= (canvas.height-35) || iny <= 0){
                 invy = -invy;
             }
+
+            if(pc.x+pc.w>400 && pc.y-pc.w<iny && pc.x<=430 && iny<pc.y+pc.w){
+               die=1;
+            }
+
         requestAnimationFrame(passo);
         }
         addEventListener("keydown",teclaPressionada);
