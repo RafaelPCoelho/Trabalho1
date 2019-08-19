@@ -27,7 +27,7 @@
             pc.vx = 0;
             pc.vy = 0;
             pc.x = 200;
-            pc.y = 200;
+            pc.y = canvas.height-50;
 
             var bala = {
                 x : pc.mover,
@@ -39,8 +39,8 @@
             }
 
             var pc2 = {
-                x : 50,
-                y : 150,
+                x : Math.random()*canvas.width,
+                y : Math.random()*canvas.height,
                 w : 30,
                 vx : 0,
                 vy : 0,
@@ -169,8 +169,10 @@
         }
 
         function limpaTela(){
-            ctx.fillStyle = "tan";
+            ctx.fillStyle = "lightgreen";
             ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "lightblue";
+            ctx.fillRect(0,0,canvas.width,canvas.height-20);
         }
 
         function passo(t){
@@ -185,6 +187,10 @@
             if (die==0){
                 pc.desenhar(ctx);
                 pc.mover(dt);
+            }
+            
+            if (bala.x >= canvas.width || die == 1) {
+                bang = 0;
             }
 
             if (bang == 1){
@@ -204,7 +210,7 @@
 
             anterior = t;
 
-            if (iny >= (canvas.height-35) || iny <= 0){
+            if (iny >= (canvas.height-50) || iny <= 0){
                 invy = -invy;
             }
 
@@ -212,13 +218,10 @@
                killed=1;
             }
 
-            if(pc.x+pc.w>400 && pc.y-pc.w<iny && pc.x<=430 && iny<pc.y+pc.w){
+            if(pc.x+pc.w>400 && pc.y-pc.w<iny && pc.x<=430 && iny<pc.y+pc.w && killed==0){
                die=1;
             }
 
-            if (bala.x >= canvas.width){
-                bang = 0;
-            }
 
 
         requestAnimationFrame(passo);
