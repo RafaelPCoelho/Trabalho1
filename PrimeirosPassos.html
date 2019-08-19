@@ -18,7 +18,9 @@
             var tg = 0;
             var iny = 325;
             var die=0;
+            var killed=0;
             var bang = 0;
+            var ladoDaBala = 1;
             
             var pc = {};
             pc.w = 30;
@@ -88,8 +90,8 @@
             }
 
             bala.mover = function(dt){
-                bala.y = pc.y + bala.vy*dt;
-                bala.x = pc.x + bala.vx*dt;
+                bala.x += bala.vx*dt;
+                //bala.x = pc.x + bala.vx*dt;
             }
 
             pc.desenhar = personagem;
@@ -102,9 +104,11 @@
             console.log(e.keyCode);
             if (e.keyCode == 39){
                 pc.vx = 400;
+                ladoDaBala = 1;
             }
             if (e.keyCode == 37){
                 pc.vx = -400;
+                ladoDaBala = -1;
             }
             if (e.keyCode == 40){
                 pc.vy = 800;
@@ -117,7 +121,13 @@
                 pc.vx = pc.vx*2;
             }
             if(e.keyCode == 32){
-                bala.vx = 1000;
+                bala.vx = 1000 * ladoDaBala;
+                bala.y = pc.y;
+                if(ladoDaBala==1)
+                    bala.x = pc.x;
+                else    
+                    bala.x = pc.x-pc.w-10;
+                bang=1;
             }
         }
         function teclaSolta(e){
@@ -133,23 +143,23 @@
             }
             if (e.keyCode == 38){
                 //pc.vy = 0;
-            }if(e.keyCode == 32){
-                bang = 1;
-            }
+            }//if(e.keyCode == 32){
+              //  bang = 1;
+            //}
         }
         
         limpaTela();
 
         function personagem(ctx){
             ctx.fillStyle = "blue";
-            ctx.fillRect(this.x,this.y,this.w,this.w);
+            ctx.fillRect(this.x ,this.y,this.w,this.w);
             ctx.strokeStyle = "white";
             ctx.strokeRect(this.x,this.y,this.w,this.w);
         }
 
         function shoot(ctx){
             ctx.fillStyle = "red";
-            ctx.fillRect(this.x,this.y,this.w,this.w);
+            ctx.fillRect(this.x+30,this.y+10,this.w,this.w);
         }
         function inimigo(x,y,t){
             ctx.fillStyle = "black";
@@ -187,8 +197,10 @@
 
             pc2.perseguir(pc);
             
+            if(killed==0){
             inimigo(400,iny);
             iny = iny + invy*dt;
+            }
 
             anterior = t;
 
@@ -196,12 +208,18 @@
                 invy = -invy;
             }
 
+            if(bala.x+bala.w>400 && bala.y-bala.w<iny && bala.x<=430 && iny<bala.y+bala.w){
+               killed=1;
+            }
+
             if(pc.x+pc.w>400 && pc.y-pc.w<iny && pc.x<=430 && iny<pc.y+pc.w){
                die=1;
             }
+
             if (bala.x >= canvas.width){
                 bang = 0;
             }
+
 
         requestAnimationFrame(passo);
         }
