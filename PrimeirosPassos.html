@@ -18,7 +18,7 @@
             var tg = 0;
             var iny = 325;
             var die=0;
-            var NDtiros = 100;
+            var bang = 0;
             
             var pc = {};
             pc.w = 30;
@@ -134,7 +134,7 @@
             if (e.keyCode == 38){
                 //pc.vy = 0;
             }if(e.keyCode == 32){
-                bala.vx = 0;
+                bang = 1;
             }
         }
         
@@ -177,9 +177,9 @@
                 pc.mover(dt);
             }
 
-            if (NDtiros > 0){
+            if (bang == 1){
             bala.desenhar(ctx);
-            bala.mover(dt); //pse
+            bala.mover(dt);
             }
             
             pc2.desenhar(ctx);
@@ -198,6 +198,9 @@
 
             if(pc.x+pc.w>400 && pc.y-pc.w<iny && pc.x<=430 && iny<pc.y+pc.w){
                die=1;
+            }
+            if (bala.x >= canvas.width){
+                bang = 0;
             }
 
         requestAnimationFrame(passo);
