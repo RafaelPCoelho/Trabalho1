@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>O JOGO</title>
+    <script src="./Personagem.js"></script>
+    <script src="./Bala.js"></script>
+    <script src="./inimigos.js"></script>
+</head>
+
+<body>
+    <canvas></canvas>
+    <script>
+        var canvas = document.querySelector("canvas");
+        var ctx = canvas.getContext("2d");
+        canvas.width = 800;
+        canvas.height = 500;
+
+        var gravidade = 1500;
+        var dt = 0; //frame de tempo
+        var anterior = 0; //tempo anterior
+        var tiros = [];
+        var ladoDaBala = 1; // direita ou esquerda
+        var verticeDaBala = 0; // cima e baixo
+        var NInimigos = 10; //numero de inimigos
+        var thiago = [] // aliados
+
+        var pontos = 100; // pontos de vida
+
+        var personagem = new personagem({ color: "red" }) //personagen
+
+        var teclas = {
+            cima: 0,
+            direita: 0,
+            esquerda: 0,
+            baixo: 0,
+            espaco: 0,
+        }
+
+        //Geração dos Inimigos
+        for (var i = 0; i < NInimigos; i++) {
+            thiago[i] = new inimigos({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vy: Math.random() ,
+                vx: Math.random() ,
+                color: "rgb(" + (i * 30) + ",0,0)",
+            });
+        }
+
+        //geração de teclas
+        addEventListener("keydown", function (e) {
+            switch (e.keyCode) {
+                case 37:
+                    teclas.esquerda = 1;
+                    ladoDaBala = -1;
+                    verticeDaBala = 0;
+                    break;
+                case 38:
+                    teclas.cima = 1;
+                    ladoDaBala = 0;
+                    verticeDaBala = -1;
+                    break;
+                case 39:
+                    teclas.direita = 1;
+                    ladoDaBala = 1;
+                    verticeDaBala = 0;
+                    break;
+                case 40:
+                    teclas.baixo = 1;
+                    ladoDaBala = 0;
+                    verticeDaBala = 1;
+                    break;
+                case 32:
+                    teclas.espaco = 1;
+                    break;
+
+                default:
+                    break;
+            }
+        })
+
+        addEventListener("keyup", function (e) {
+            switch (e.keyCode) {
+                case 37:
+                    teclas.esquerda = 0;
+                    break;
+                case 38:
+                    teclas.cima = 0;
+                    break;
+                case 39:
+                    teclas.direita = 0;
+                    break;
+                case 40:
+                    teclas.baixo = 0;
+                    break;
+                case 32:
+                    teclas.espaco = 0;
+                    break;
+
+                default:
+                    break;
+            }
+
+        })
+
+        function passo(t) {
+            dt = (t - anterior) / 1000;
+
+            if (teclas.espaco && personagem.atirando <= 0) {
+                var tiro = new bala({
+                    x: personagem.x + (personagem.w/3),
+                    y: personagem.y + (personagem.w/3),
+                    w: 5,
+                    vx: 800,
+                    vy: 800,
+                    color: "white",
+                    ladoDaBala: ladoDaBala,
+                    verticeDaBala: verticeDaBala,
+                });
+                tiros.push(tiro);
+                personagem.atirando = 1 / 3;
+                tiro = null;
+            }
+
+            ctx.font = "10px bold monospaced";
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "white"
+            ctx.fillText(t, 10, 10);
+            ctx.fillText(dt, 10, 20);
+
+            for (var i = 0; i < thiago.length; i++) {
+                thiago[i].perseguir({alvo: personagem});
+                thiago[i].mover(dt);
+                thiago[i].desenhar(ctx);
+            }
+
+            personagem.controlePorTeclas({ teclas: teclas });
+            personagem.paredes(canvas);
+            personagem.mover(dt, gravidade);
+            personagem.desenhar(ctx);
+
+            for (var i = 0; i < tiros.length; i++) {
+                tiros[i].desenhar(ctx, { teclas: teclas });
+                tiros[i].mover(dt);
+            }
+
+            for (var i = 0; i < thiago.length; i++) {
+                thiago[i].desenhar(ctx);
+                if (personagem.imune <= 0 && personagem.colidiuCom(thiago[i])) {
+                    //thiago[i].x = Math.random() * canvas.width;
+                   // thiago[i].y = Math.random() * canvas.height;
+                   pontos--;
+                   personagem.imune = 2;
+                }
+            }
+
+            // faz a vida
+            ctx.fillStyle = "yellow";
+            ctx.strokeStyle = "red";
+            ctx.font = "15px bold monospaced";
+            ctx.fillText(pontos, 500,20);
+            ctx.strokeText(pontos, 500,20);
+
+            requestAnimationFrame(passo);
+            anterior = t;
+        }
+
+        requestAnimationFrame(passo);
+
+    </script>
+
+</body>
+
+</html>
