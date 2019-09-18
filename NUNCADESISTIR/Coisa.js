@@ -9,7 +9,7 @@ function Coisa(parametros = {}) {
         a: 0,
         va: 0,
         vm: 0,
-        cooldown: 0,
+        cooldown: 0.1,
         mira: 0,
         color: "blue",
         imune: 0,

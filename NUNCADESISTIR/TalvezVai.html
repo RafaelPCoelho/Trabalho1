@@ -31,6 +31,14 @@
         canvas.height = 702; //altura 
 
         var dtinimigos = 0; //tempo dos inimigos
+        var addinimigos = 0;//add mais inimigos
+
+        var CD = 0.5; //cooldown pra ficar mais easy de fazer
+        var treload = 2; //tempo do carregando
+        var reload = 0; //carregando
+        var tantoDeBala = 10;
+        var cartucho = tantoDeBala; // o tanto de bala q pode atirar
+        var recarregar = tantoDeBala; // recarrega o cartucho
 
         //chama a fase 1
         var Fase1 = new Fase1({ ctx: ctx, w: canvas.width, h: canvas.height });
@@ -60,6 +68,7 @@
             vy: 0,
             va: 2,
             vida: 3,
+            cooldown : CD,
             comportar: movePersonagem(teclas),
             mirar: persegue2(mira),
             props: { tipo: "personagem" },
@@ -77,7 +86,7 @@
                 if (teclas.baixo) { this.vy = 300 }
                 if (!teclas.baixo === !teclas.cima) { this.vy = 0 }
 
-                if ((teclas.espace || teclas.click) && this.cooldown <= 0) {
+                if ((teclas.espace || teclas.click) && this.cooldown <= 0 && reload <= 0 ) {
                     var tiro = new Coisa({
                         x: this.x,
                         y: this.y,
@@ -89,7 +98,12 @@
                         props: { tipo: "tiro" }
                     })
                     this.Fase1.adicionar(tiro);
-                    this.cooldown = 0.01;
+                    this.cooldown = CD;
+                    cartucho--;
+                    if (cartucho == 0){
+                        reload = treload;
+                        cartucho = tantoDeBala;
+                    }
                 }
             }
         }
@@ -165,6 +179,7 @@
             dt = (t - anterior) / 1000
             Fase1.passo(dt);
             dtinimigos = dtinimigos - dt;
+            reload = reload - dt
             anterior = t;
             requestAnimationFrame(passo);
         }
