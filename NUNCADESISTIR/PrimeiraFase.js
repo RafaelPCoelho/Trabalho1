@@ -65,7 +65,7 @@ Fase1.prototype.inimigos = function () {
             w: 15,
             va: 2,
             vm: 10,
-            color: "red",
+            color: "green",
             vida: 1,
             comportar: persegue2(personagem),
             props: { tipo: "inimigo" }
@@ -77,7 +77,7 @@ Fase1.prototype.inimigos = function () {
             w: 15,
             va: 2,
             vm: 10,
-            color: "red",
+            color: "green",
             vida: 1,
             comportar: persegue2(personagem),
             props: { tipo: "inimigo" }
@@ -89,7 +89,7 @@ Fase1.prototype.inimigos = function () {
             w: 15,
             va: 2,
             vm: 10,
-            color: "red",
+            color: "green",
             vida: 1,
             comportar: persegue2(personagem),
             props: { tipo: "inimigo" }
@@ -101,18 +101,22 @@ Fase1.prototype.inimigos = function () {
             w: 15,
             va: 2,
             vm: 10,
-            color: "red",
+            color: "green",
             vida: 1,
             comportar: persegue2(personagem),
             props: { tipo: "inimigo" }
         }));
         dtinimigos = 2 + addinimigos;
+        if (dtinimigos <= 0.2){
+            dtinimigos = 2;
+            addinimigos = 0;
+        }
     }
 }
 
 Fase1.prototype.limpar = function () {
     this.ctx.clearRect(0, 0, this.w, this.h);
-    this.ctx.fillStyle = "lightgreen";
+    this.ctx.fillStyle = "grey";
     this.ctx.fillRect(0, 0, canvas.width, canvas.height);
     for (var i = 0; i < this.Coisinhas.length; i++) {
         if (this.Coisinhas[i].props.tipo === "personagem") {
@@ -247,7 +251,7 @@ Fase1.prototype.removeOsMorto = function () {
                     props: { tipo: "CD" }
                 }));
             }
-            if (item > 3 && item < 4) {
+            if (item > 3 && item < 3.5) {
                 Fase1.adicionar(new Coisa({ // life healing
                     x: this.Coisinhas[i].x,
                     y: this.Coisinhas[i].y,
@@ -258,7 +262,7 @@ Fase1.prototype.removeOsMorto = function () {
                     props: { tipo: "life" }
                 }));
             }
-            addinimigos = addinimigos - pontuação/1000;
+            addinimigos = addinimigos - 0.05;
         }
         if (this.Coisinhas[i].props.tipo === "inicializador" && this.Coisinhas[i].vida <= 0) {
             this.toRemove.push(this.Coisinhas[i]);

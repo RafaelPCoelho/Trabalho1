@@ -27,6 +27,39 @@ function Coisa(parametros = {}) {
 }
 
 Coisa.prototype.desenhar = function (ctx) {
+    if (this.inicial){
+        if (this.vida == 5){
+            ctx.font = "bold 20px Arial";
+            ctx.fillText("Bem Vindos!",this.x-30,this.y+30);
+            ctx.fillText("Esta pronto para começar uma incrivel aventura?",this.x-30,this.y+50);
+            ctx.fillText("(controle a mira com o Mause e aperte o botão esquerdo para atirar em MIM)",this.x-30,this.y+70);
+        }
+        if (this.vida == 4){
+            ctx.font = "bold 20px Arial";
+            ctx.fillText("Tudo bem :). Atirar em mim não machuca, mas pode ter certeza",this.x-30,this.y+30);
+            ctx.fillText("que UM tiro desses é o suficiente para matar os zumbis que estão por vir",this.x-30,this.y+50);
+            ctx.fillText("(atira em mim de novo)",this.x-30,this.y+70);
+        }
+        if (this.vida == 3){
+            ctx.font = "bold 20px Arial";
+            ctx.fillText("Ahh, vc n sabe? Esta vindo uma horda de zumbis para ca...",this.x-30,this.y+30);
+            ctx.fillText("eles são iguais a mim so q Verdes, da pra vc correr deles tb",this.x-30,this.y+50);
+            ctx.fillText("(Use W,A,S,D para controlar seu personagem(e atira em mim de novo :P))",this.x-30,this.y+70);
+        }
+        if (this.vida == 2){
+            ctx.font = "bold 20px Arial";
+            ctx.fillText("Os zumbis vão deixar cair items quando vc mata-los",this.x-30,this.y+30);
+            ctx.fillText("o AMARELO diminui seu Reload, AZUL aumenta seu pente de balas",this.x-30,this.y+50);
+            ctx.fillText("o ROSA aumenta a taxa de tiro por segundo e o MARROM te da VIDA!!!",this.x-30,this.y+70);
+        }
+        if (this.vida == 1){
+            ctx.font = "bold 40px Arial";
+            ctx.fillText("AIII!!!! EU NÃO PEDI PRA ME ATIRAR DE NOVO!!!",this.x-60,this.y+50);
+            ctx.font = "bold 20px Arial";
+            ctx.fillText("Enfim, GOOD LUCK!!!",this.x-30,this.y+70);
+            ctx.fillText("Agora pode atirar",this.x-30,this.y+90);
+        }
+    }
     if (!this.mira && !this.item) {
         ctx.save();
         ctx.translate(this.x, this.y);
