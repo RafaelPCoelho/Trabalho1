@@ -57,7 +57,7 @@ Fase1.prototype.paroDeCarregar = function () {
 }
 
 Fase1.prototype.inimigos = function () {
-    if (dtinimigos < 0) {
+    if (dtinimigos < 0 && !endgame && startgame) {
         Fase1.adicionar(new Coisa({ /// Direita
             x: canvas.width + (canvas.width * Math.random()),
             y: (canvas.height * Math.random()),
@@ -106,7 +106,7 @@ Fase1.prototype.inimigos = function () {
             comportar: persegue2(personagem),
             props: { tipo: "inimigo" }
         }));
-        dtinimigos = 4 + addinimigos;
+        dtinimigos = 2 + addinimigos;
     }
 }
 
@@ -163,9 +163,13 @@ Fase1.prototype.checaColisao = function () {
                     this.toRemove.push(this.Coisinhas[j]);
                     pontuação = pontuação + 10;
                 }
+                if (this.Coisinhas[i].props.tipo === "inicializador" && this.Coisinhas[j].props.tipo === "tiro") {
+                    this.toRemove.push(this.Coisinhas[j]);
+                    this.Coisinhas[i].vida--;
+                }
                 if (this.Coisinhas[i].props.tipo === "personagem" && this.Coisinhas[j].props.tipo === "CD") {
                     this.toRemove.push(this.Coisinhas[j]);
-                    CD = CD - 0.05;
+                    CD = CD - 0.01;
                     pontuação = pontuação + 5;
                 }
                 if (this.Coisinhas[i].props.tipo === "personagem" && this.Coisinhas[j].props.tipo === "reload") {
@@ -254,7 +258,11 @@ Fase1.prototype.removeOsMorto = function () {
                     props: { tipo: "life" }
                 }));
             }
-            addinimigos = addinimigos - 0.02;
+            addinimigos = addinimigos - pontuação/1000;
+        }
+        if (this.Coisinhas[i].props.tipo === "inicializador" && this.Coisinhas[i].vida <= 0) {
+            this.toRemove.push(this.Coisinhas[i]);
+            startgame = 1;
         }
     }
 }

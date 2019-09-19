@@ -64,7 +64,7 @@ Coisa.prototype.desenharPersonagem = function (ctx) {
     if (!this.mira) {
         if (this.carregando){
             ctx.font = "bold 15px Arial";
-            ctx.fillText("Recharge",this.x-30,this.y+30);
+            ctx.fillText("Recharge...",this.x-30,this.y+30);
         }
         ctx.save();
         ctx.translate(this.x, this.y);

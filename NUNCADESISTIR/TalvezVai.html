@@ -33,7 +33,7 @@
         var dtinimigos = 0; //tempo dos inimigos
         var addinimigos = 0;//add mais inimigos
 
-        var CD = 0.1; //cooldown pra ficar mais easy de fazer
+        var CD = 0.25; //cooldown pra ficar mais easy de fazer
         var treload = 2; //tempo do carregando
         var reload = 0; //carregando
         var tantoDeBala = 10; //o tanto de bala
@@ -41,6 +41,7 @@
         var recarregar = tantoDeBala; // recarrega o cartucho
 
         var endgame = 0;//cabo o jogo
+        var startgame = 0;// começo o jogo
 
         var pontuação = 0; //pontuação
 
@@ -73,12 +74,25 @@
             vx: 0,
             vy: 0,
             va: 2,
-            vida: 3,
+            vida: 100,
             cooldown : CD,
             comportar: movePersonagem(teclas),
             mirar: persegue2(mira),
             props: { tipo: "personagem" },
         }); // cria meu personagem
+
+        Fase1.adicionar(new Coisa({ /// Inicializador
+            x: canvas.width/3,
+            y: canvas.height/3,
+            h: 15,
+            w: 15,
+            va: 2,
+            vm: 0,
+            color: "yellow",
+            vida: 5,
+            comportar: persegue2(personagem),
+            props: { tipo: "inicializador" }
+        }));
 
         Fase1.adicionar(personagem);//Adiciona o personagem na fase 1
         Fase1.adicionar(mira)/// Adiciona a mira na fase 1
