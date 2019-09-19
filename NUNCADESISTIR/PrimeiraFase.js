@@ -18,8 +18,9 @@ Fase1.prototype.adicionar = function (Coisa) {
 }
 
 Fase1.prototype.desenhar = function () {
-    for (var i = 0; i < this.Coisinhas.length; i++) {
+    for (var i = 0; i < this.Coisinhas.length && endgame == 0; i++) {
         this.Coisinhas[i].desenhar(this.ctx);
+        this.Coisinhas[i].desenharItens(this.ctx);
         if (this.Coisinhas[i].props.tipo === "personagem") {
             this.Coisinhas[i].desenharMira(this.ctx);
             this.Coisinhas[i].desenharPersonagem(this.ctx);
@@ -47,6 +48,14 @@ Fase1.prototype.mirar = function () {
     }
 }
 
+Fase1.prototype.paroDeCarregar = function () {
+    for (var i = 0; i < this.Coisinhas.length; i++){
+        if (this.Coisinhas[i].props.tipo === "personagem" && reload <= 0){
+            this.Coisinhas[i].carregando = 0;
+        }
+    }
+}
+
 Fase1.prototype.inimigos = function () {
     if (dtinimigos < 0) {
         Fase1.adicionar(new Coisa({ /// Direita
@@ -55,7 +64,7 @@ Fase1.prototype.inimigos = function () {
             h: 15,
             w: 15,
             va: 2,
-            vm: 50,
+            vm: 10,
             color: "red",
             vida: 1,
             comportar: persegue2(personagem),
@@ -67,7 +76,7 @@ Fase1.prototype.inimigos = function () {
             h: 15,
             w: 15,
             va: 2,
-            vm: 50,
+            vm: 10,
             color: "red",
             vida: 1,
             comportar: persegue2(personagem),
@@ -79,7 +88,7 @@ Fase1.prototype.inimigos = function () {
             h: 15,
             w: 15,
             va: 2,
-            vm: 50,
+            vm: 10,
             color: "red",
             vida: 1,
             comportar: persegue2(personagem),
@@ -91,7 +100,7 @@ Fase1.prototype.inimigos = function () {
             h: 15,
             w: 15,
             va: 2,
-            vm: 50,
+            vm: 10,
             color: "red",
             vida: 1,
             comportar: persegue2(personagem),
@@ -103,6 +112,29 @@ Fase1.prototype.inimigos = function () {
 
 Fase1.prototype.limpar = function () {
     this.ctx.clearRect(0, 0, this.w, this.h);
+    this.ctx.fillStyle = "lightgreen";
+    this.ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (var i = 0; i < this.Coisinhas.length; i++) {
+        if (this.Coisinhas[i].props.tipo === "personagem") {
+            for (var j = 0; j < this.Coisinhas[i].vida; j++) {
+                ctx.fillStyle = "red"
+                ctx.fillRect(180+(j * 40), 15, 30, 30);
+            }
+            ctx.fillStyle = "black"
+            ctx.font = "bold 30px Arial";
+            ctx.fillText("Life Points:",10,40);
+
+            ctx.font = "bold 30px Arial";
+            ctx.fillText("Score:",10,80);
+            ctx.fillText(pontuação,110,82);
+            
+            if (this.Coisinhas[i].vida <= 0){
+                this.ctx.fillStyle = "red";
+                this.ctx.fillRect(0, 0, canvas.width, canvas.height);
+                endgame = 1;
+            }
+        }
+    }
 }
 
 Fase1.prototype.comportar = function () {
@@ -129,19 +161,28 @@ Fase1.prototype.checaColisao = function () {
                     //this.toRemove.push(this.Coisinhas[i]);
                     this.Coisinhas[i].vida--;
                     this.toRemove.push(this.Coisinhas[j]);
+                    pontuação = pontuação + 10;
                 }
                 if (this.Coisinhas[i].props.tipo === "personagem" && this.Coisinhas[j].props.tipo === "CD") {
                     this.toRemove.push(this.Coisinhas[j]);
-                    CD = CD - 0.01 ;
+                    CD = CD - 0.05;
+                    pontuação = pontuação + 5;
                 }
                 if (this.Coisinhas[i].props.tipo === "personagem" && this.Coisinhas[j].props.tipo === "reload") {
                     this.toRemove.push(this.Coisinhas[j]);
                     treload = treload - 0.05;
+                    pontuação = pontuação + 5;
                 }
                 if (this.Coisinhas[i].props.tipo === "personagem" && this.Coisinhas[j].props.tipo === "cartucho") {
                     this.toRemove.push(this.Coisinhas[j]);
                     cartucho++;
                     tantoDeBala++;
+                    pontuação = pontuação + 5;
+                }
+                if (this.Coisinhas[i].props.tipo === "personagem" && this.Coisinhas[j].props.tipo === "life") {
+                    this.toRemove.push(this.Coisinhas[j]);
+                    this.Coisinhas[i].vida++;
+                    pontuação = pontuação + 20;
                 }
             }
             if (!this.Coisinhas[i].colidiuCom(this.Coisinhas[j])) {
@@ -170,33 +211,47 @@ Fase1.prototype.removeOsMorto = function () {
             this.toRemove.push(this.Coisinhas[i]);
             var item = 10 * Math.random();
             if (item < 1) {
-                Fase1.adicionar(new Coisa({ // Esquerda
+                Fase1.adicionar(new Coisa({ // diminui o tempo de carregamento
                     x: this.Coisinhas[i].x,
                     y: this.Coisinhas[i].y,
                     h: 10,
                     w: 10,
+                    item: 1,
                     color: "yellow",
                     props: { tipo: "reload" }
                 }));
             }
             if (item > 1 && item < 2) {
-                Fase1.adicionar(new Coisa({ // Esquerda
+                Fase1.adicionar(new Coisa({ // aumenta o cartucho de balas
                     x: this.Coisinhas[i].x,
                     y: this.Coisinhas[i].y,
                     h: 10,
                     w: 10,
+                    item: 1,
                     color: "lightblue",
                     props: { tipo: "cartucho" }
                 }));
             }
             if (item > 2 && item < 3) {
-                Fase1.adicionar(new Coisa({ // Esquerda
+                Fase1.adicionar(new Coisa({ // aumenta a taxa de tiros
                     x: this.Coisinhas[i].x,
                     y: this.Coisinhas[i].y,
                     h: 10,
                     w: 10,
+                    item: 1,
                     color: "pink",
                     props: { tipo: "CD" }
+                }));
+            }
+            if (item > 3 && item < 4) {
+                Fase1.adicionar(new Coisa({ // life healing
+                    x: this.Coisinhas[i].x,
+                    y: this.Coisinhas[i].y,
+                    h: 10,
+                    w: 10,
+                    item: 1,
+                    color: "brown",
+                    props: { tipo: "life" }
                 }));
             }
             addinimigos = addinimigos - 0.02;
@@ -220,6 +275,7 @@ Fase1.prototype.passo = function (dt) {
     this.mirar();
     this.desenhar();
     this.desenharMira();
+    this.paroDeCarregar();
     this.inimigos();
     this.mover(dt);
     this.checaColisao();

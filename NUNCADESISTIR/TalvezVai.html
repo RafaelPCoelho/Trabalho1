@@ -27,18 +27,22 @@
         var dt = 0;
         var anterior = 0;
 
-        canvas.width = 1528; // largura
+        canvas.width = 1520; // largura
         canvas.height = 702; //altura 
 
         var dtinimigos = 0; //tempo dos inimigos
         var addinimigos = 0;//add mais inimigos
 
-        var CD = 0.5; //cooldown pra ficar mais easy de fazer
+        var CD = 0.1; //cooldown pra ficar mais easy de fazer
         var treload = 2; //tempo do carregando
         var reload = 0; //carregando
-        var tantoDeBala = 10;
+        var tantoDeBala = 10; //o tanto de bala
         var cartucho = tantoDeBala; // o tanto de bala q pode atirar
         var recarregar = tantoDeBala; // recarrega o cartucho
+
+        var endgame = 0;//cabo o jogo
+
+        var pontuação = 0; //pontuação
 
         //chama a fase 1
         var Fase1 = new Fase1({ ctx: ctx, w: canvas.width, h: canvas.height });
@@ -64,6 +68,8 @@
         var personagem = new Coisa({
             x: canvas.width / 2,
             y: canvas.height / 2,
+            h: 15,
+            w: 15,
             vx: 0,
             vy: 0,
             va: 2,
@@ -79,11 +85,11 @@
 
         function movePersonagem(teclas) { ///teclas pro personagem mover
             return function () {
-                if (teclas.esquerda) { this.vx = -300 }
-                if (teclas.direita) { this.vx = 300 }
+                if (teclas.esquerda) { this.vx = -100 }
+                if (teclas.direita) { this.vx = 100 }
                 if (!teclas.esquerda === !teclas.direita) { this.vx = 0 }
-                if (teclas.cima) { this.vy = -300 }
-                if (teclas.baixo) { this.vy = 300 }
+                if (teclas.cima) { this.vy = -100 }
+                if (teclas.baixo) { this.vy = 100 }
                 if (!teclas.baixo === !teclas.cima) { this.vy = 0 }
 
                 if ((teclas.espace || teclas.click) && this.cooldown <= 0 && reload <= 0 ) {
@@ -101,6 +107,7 @@
                     this.cooldown = CD;
                     cartucho--;
                     if (cartucho == 0){
+                        this.carregando = 1;
                         reload = treload;
                         cartucho = tantoDeBala;
                     }

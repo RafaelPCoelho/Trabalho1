@@ -11,9 +11,12 @@ function Coisa(parametros = {}) {
         vm: 0,
         cooldown: 0.1,
         mira: 0,
+        item: 0,
+        inicial: 0,
         color: "blue",
         imune: 0,
         atirando: 0,
+        carregando: 0,
         props: 0,
         vida: 0,
         comportar: undefined,
@@ -24,7 +27,7 @@ function Coisa(parametros = {}) {
 }
 
 Coisa.prototype.desenhar = function (ctx) {
-    if (this.mira != 1) {
+    if (!this.mira && !this.item) {
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.a);
@@ -49,8 +52,20 @@ Coisa.prototype.desenhar = function (ctx) {
     }
 }
 
+Coisa.prototype.desenharItens = function (ctx){
+    if (this.item){
+        ctx.fillStyle = this.color
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.strokeRect(this.x, this.y, this.w, this.h)
+    }
+}
+
 Coisa.prototype.desenharPersonagem = function (ctx) {
-    if (this.mira != 1) {
+    if (!this.mira) {
+        if (this.carregando){
+            ctx.font = "bold 15px Arial";
+            ctx.fillText("Recharge",this.x-30,this.y+30);
+        }
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.a);
@@ -60,7 +75,7 @@ Coisa.prototype.desenharPersonagem = function (ctx) {
         }
         ctx.strokeStyle = "black";
         ctx.lineWidth = 1;
-
+        
         ctx.beginPath();
         ctx.moveTo(-this.w / 2, -this.h / 2);
         ctx.lineTo(-this.w / 2, +this.h / 2);
@@ -68,15 +83,17 @@ Coisa.prototype.desenharPersonagem = function (ctx) {
         ctx.closePath();
         ctx.fill();
         ctx.stroke();
-
+        ctx.fillStyle = "lightred";
+        
         ctx.restore();
-
+        
         ctx.globalAlpha = 1.0;
+
     }
 }
 
 Coisa.prototype.desenharMira = function (ctx) {
-    if (this.mira == 1) {
+    if (this.mira) {
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.a);
