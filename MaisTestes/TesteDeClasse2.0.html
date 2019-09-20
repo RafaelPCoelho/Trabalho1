@@ -7,10 +7,25 @@
     <title>Semana4</title>
     <script src="./Sprite2.0.js"></script>
     <script src="./Scene.js"></script>
+    <script src="./AssetsManager.js"></script>
 </head>
 <body>
     <canvas></canvas>
     <script>
+        var AssetsMng = new AssetsManager();
+
+        AssetsMng.loadImage("player","boss1.png");
+
+        AssetsMng.loadImage("enemy_1","enemy_1.png");
+
+        var imgPlayer = new Image();
+        imgPlayer.src = "player_ship.png"
+        imgPlayer.addEventListener("load",function(){
+            console.log("imagem player carreganda!");
+        })
+        console.log("Carregando imagem player...");
+        imgPlayer.src = "player_ship.png"
+         
         var canvas = document.querySelector("canvas");
         var ctx = canvas.getContext("2d")
 
@@ -25,21 +40,26 @@
             espace: 0,
         }
     
-        var cena1 = new Scene({ctx: ctx, w: canvas.width , h: canvas.height});
-        var personagem = new Sprite({x:150 ,y:150 ,comportar: porTeclasDirecionais(teclas), props:{tipo:"pernsonagem"}});
+        var cena1 = new Scene({ctx: ctx, w: canvas.width , h: canvas.height,assets: AssetsMng });
+        var personagem = new Sprite({x:150 ,y:150 ,w:128,h:128,comportar: porTeclasDirecionais(teclas), props:{tipo:"pernsonagem"}});
         var dt ,anterior = 0;
 
         cena1.adicionar(personagem);
-        cena1.adicionar(new Sprite({ x: 460, y: 150, w: 15, va:2, vm:30, color: "green", comportar: persegueSpawn(personagem), props:{tipo:"npc", spawn:0} }));
+        cena1.adicionar(new Sprite({ x: 460, y: 150, w: 32,h: 32, va:2, vm:30, color: "green", comportar: persegueSpawn(personagem), props:{tipo:"npc", spawn:0}, desenhar:desenhaPersonagem }));
         for (var k = 0; k < 10; k++) {
           
             cena1.adicionar(new Sprite({
                 x: 300*Math.random(), 
                 y: 400*Math.random(), 
-                h: 20, 
+                h: 32,
+                w: 32, 
                 va:2*Math.random(), 
                 vm:60*Math.random(),
-                color: "red", comportar: persegue2(personagem) , props:{tipo:"npc"}}));
+                color: "red",
+                comportar: persegue2(personagem) ,
+                props:{tipo:"npc"},
+                desenhar: desenhaInimigo,
+            }));
             
         }
 
@@ -50,12 +70,60 @@
             }
         }*/
 
+        function desenhaPersonagem(){
+        ctx.save();
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.a+Math.PI/2);
+    ctx.drawImage(this.scene.assets.img("player"),
+    -this.w/2,
+    -this.h/2,
+    this.w,
+    this.h)
+    /*
+    ctx.fillStyle = this.color;
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-this.w/2,-this.h/2);
+    ctx.lineTo(-this.w/2, +this.h/2);
+    ctx.lineTo(+this.w/2, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+*/
+    ctx.restore();
+        }
+
+        function desenhaInimigo () {
+            ctx.save();
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.a+Math.PI/2);
+    ctx.drawImage(this.scene.assets.img("enemy_1"),
+    -this.w/2,
+    -this.h/2,
+    this.w,
+    this.h)
+    /*
+    ctx.fillStyle = this.color;
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(-this.w/2,-this.h/2);
+    ctx.lineTo(-this.w/2, +this.h/2);
+    ctx.lineTo(+this.w/2, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+*/
+    ctx.restore();
+        }
+
         function persegue2(alvo) {
             return function () {
                 var dx = alvo.x - this.x;
                 var dy = alvo.y - this.y;
                 var da = Math.sqrt(dx*dx + dy*dy);
-                var adj = 1.5; 
+                var adj = Math.PI/2; 
                 var prod = (dx/da)*Math.cos(this.a +adj) + (dy/da)*Math.sin(this.a +adj);
                 this.va = 2*(prod-0);
                 //this.vm = 30;
@@ -77,6 +145,8 @@
                     var novo = new Sprite({
                         color : "yellow",
                         x : this.x, y: this.y,
+                        h:32,
+                        w: 32,
                         vm: 100*Math.random(),
                         props: {tipo: "npc"},
                         comportar: persegue2(alvo) 
@@ -98,7 +168,7 @@
 
                 if (teclas.espace && this.cooldown <= 0){
                     var tiro = new Sprite({
-                        x: this.x, y: this.y ,a: this.a -0.1+0.2*Math.random(), vm:240, color: "green",w: 5 , h: 2 ,props:{tipo: "tiro"}
+                        x: this.x, y: this.y ,a: this.a -0.1+0.2*Math.random(), vm:240, color: "green",w: 10 , h: 10 ,props:{tipo: "tiro"}
                     })
                     this.scene.adicionar(tiro);
                     this.cooldown = 0.05;
@@ -149,6 +219,7 @@
         function passo(t){
             dt = (t - anterior)/1000;
             cena1.passo(dt);
+            //ctx.drawImage(AssetsMng.img("player"),cena1.sprites[0].x,cena1.sprites[0].y,256,256);
             anterior = t;
             ctx.fillText(1/dt, 10,20);
             requestAnimationFrame(passo);

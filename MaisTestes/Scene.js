@@ -5,6 +5,7 @@ function Scene(params){
         ctx: null,
         w:300,
         h:300,
+        assets: null,
     }
     Object.assign(this,exemplo,params);
 }

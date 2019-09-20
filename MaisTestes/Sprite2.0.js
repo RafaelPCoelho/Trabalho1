@@ -26,11 +26,16 @@ Sprite.prototype.constructor = Sprite;
 Sprite.prototype.desenhar = function(ctx){
     ctx.save();
     ctx.translate(this.x,this.y);
-    ctx.rotate(this.a);
+    ctx.rotate(this.a+Math.PI/2);
+    ctx.drawImage(this.scene.assets.img("player"),
+    -this.w/2,
+    -this.h/2,
+    this.w,
+    this.h)
+    /*
     ctx.fillStyle = this.color;
     ctx.strokeStyle = "black";
     ctx.lineWidth = 1;
-
     ctx.beginPath();
     ctx.moveTo(-this.w/2,-this.h/2);
     ctx.lineTo(-this.w/2, +this.h/2);
@@ -38,7 +43,7 @@ Sprite.prototype.desenhar = function(ctx){
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
-
+*/
     ctx.restore();
 }
 
