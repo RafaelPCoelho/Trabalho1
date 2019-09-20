@@ -252,7 +252,7 @@ Fase1.prototype.removeOsMorto = function () {
                 }));
             }
             if (item > 3 && item < 3.5) {
-                Fase1.adicionar(new Coisa({ // life healing
+                Fase1.adicionar(new Coisa({ // life heal
                     x: this.Coisinhas[i].x,
                     y: this.Coisinhas[i].y,
                     h: 10,

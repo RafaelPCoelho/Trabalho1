@@ -57,7 +57,7 @@ Coisa.prototype.desenhar = function (ctx) {
             ctx.fillText("AIII!!!! EU NÃO PEDI PRA ME ATIRAR DE NOVO!!!",this.x-60,this.y+50);
             ctx.font = "bold 20px Arial";
             ctx.fillText("Enfim, GOOD LUCK!!!",this.x-30,this.y+70);
-            ctx.fillText("Agora pode atirar",this.x-30,this.y+90);
+            ctx.fillText("Agora pode atirar Hehe",this.x-30,this.y+90);
         }
     }
     if (!this.mira && !this.item) {
